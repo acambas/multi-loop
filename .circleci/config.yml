@@ -1,0 +1,68 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/multi-loop
+    docker:
+      - image: circleci/node:8
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Build
+          command: npm run build
+      - run:
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - save_cache:
+          key: v1-repo-{{ checksum ".circle-sha" }}
+          paths:
+            - ~/multi-loop
+
+  test:
+    working_directory: ~/multi-loop
+    docker:
+      - image: circleci/node:8
+    steps:
+      - run:  
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - run:
+          name: Test
+          command: npm test
+  publish:
+    working_directory: ~/multi-loop
+    docker:
+      - image: circleci/node:8
+    steps:
+      - run:  
+          name: save SHA to a file
+          command: echo $CIRCLE_SHA1 > .circle-sha
+      - restore_cache:
+          keys:
+            - v1-repo-{{ checksum ".circle-sha" }}
+      - run:
+          name: NPM env variable
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+          name: Publish
+          command: npm publish
+ 
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - publish:
+          filters:
+                branches:
+                  only: master
+          requires:
+            - test
