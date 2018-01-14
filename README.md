@@ -1,5 +1,8 @@
 # multi-loop
 
+
+[![CircleCI](https://circleci.com/gh/acambas/multi-loop.svg?style=svg)](https://circleci.com/gh/acambas/multi-loop)
+
 multi-loop is a small library with helper functions for looping over several arrays of same size
 
 ES6 brought us great tool for iterating over an array, like 
