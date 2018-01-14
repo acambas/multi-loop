@@ -9,6 +9,7 @@
     "build": "cross-env NODE_ENV=production babel --out-dir build --ignore __tests__ --copy-files src/",
     "lint": "eslint src/"
   },
+  "repository": "https://github.com/acambas/multi-loop",
   "author": "acambas",
   "license": "MIT",
   "dependencies": {},
